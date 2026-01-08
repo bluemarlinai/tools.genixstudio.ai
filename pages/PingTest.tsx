@@ -18,16 +18,20 @@ export const PingTest: React.FC<PingTestProps> = ({ setActions }) => {
     setIsPinging(true);
     setResults([]);
     
-    // Simulate 4 pings
+    // Normalize target URL
+    let testUrl = target;
+    if (!testUrl.startsWith('http')) testUrl = 'https://' + testUrl;
+
     for (let i = 0; i < 4; i++) {
       const startTime = Date.now();
       try {
-        // Browsers can't do ICMP, so we do a HEAD request or simple fetch
-        // Note: Subject to CORS, but gives a relative sense of 'web latency'
-        await fetch(target, { mode: 'no-cors', cache: 'no-cache' });
+        // mode: 'no-cors' is used to get around most CORS blocks for simple reachability tests
+        // Note: fetch() will still reject if there's a serious network error (DNS, Offline, etc)
+        await fetch(testUrl, { mode: 'no-cors', cache: 'no-cache' });
         const endTime = Date.now();
         setResults(prev => [...prev, { time: endTime - startTime, status: 'up' }]);
       } catch (e) {
+        console.warn(`Ping sequence ${i+1} failed for ${testUrl}:`, e);
         setResults(prev => [...prev, { time: 0, status: 'down' }]);
       }
       await new Promise(resolve => setTimeout(resolve, 800));
@@ -49,7 +53,7 @@ export const PingTest: React.FC<PingTestProps> = ({ setActions }) => {
       });
       setAnalysis(response.text || 'No analysis available.');
     } catch (e) {
-      setAnalysis("Error analyzing connectivity.");
+      setAnalysis("Error analyzing connectivity. Gemini API might be blocked.");
     } finally {
       setLoadingAnalysis(false);
     }
@@ -67,7 +71,13 @@ export const PingTest: React.FC<PingTestProps> = ({ setActions }) => {
     );
   }, [results, loadingAnalysis]);
 
-  const avgLatency = results.length > 0 ? Math.round(results.reduce((acc, r) => acc + r.time, 0) / results.length) : 0;
+  const avgLatency = results.length > 0 && results.some(r => r.status === 'up') 
+    ? Math.round(results.filter(r => r.status === 'up').reduce((acc, r) => acc + r.time, 0) / results.filter(r => r.status === 'up').length) 
+    : 0;
+
+  const packetLoss = results.length > 0 
+    ? Math.round((results.filter(r => r.status === 'down').length / results.length) * 100) 
+    : 0;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -80,8 +90,9 @@ export const PingTest: React.FC<PingTestProps> = ({ setActions }) => {
                 type="text" 
                 value={target}
                 onChange={(e) => setTarget(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && startPing()}
                 className="flex-1 bg-slate-50 border-none rounded-2xl px-6 py-4 font-mono font-bold text-lg outline-none focus:ring-2 focus:ring-emerald-100"
-                placeholder="e.g. https://google.com"
+                placeholder="e.g. google.com"
               />
               <button 
                 onClick={startPing}
@@ -91,7 +102,7 @@ export const PingTest: React.FC<PingTestProps> = ({ setActions }) => {
                 {isPinging ? 'Pinging...' : 'Start Test'}
               </button>
             </div>
-            <p className="text-[10px] text-text-secondary italic">Note: Web-based latency tests are subject to CORS and represent HTTP handshake time.</p>
+            <p className="text-[10px] text-text-secondary italic">Note: Browsers perform HTTP handshake tests. If a site blocks "no-cors" requests, it may report as Timeout.</p>
           </div>
 
           <div className="space-y-4">
@@ -99,10 +110,10 @@ export const PingTest: React.FC<PingTestProps> = ({ setActions }) => {
             <div className="bg-slate-900 rounded-3xl p-6 font-mono text-sm space-y-2 h-48 overflow-y-auto custom-scrollbar">
               {results.length === 0 && !isPinging && <p className="text-slate-600">Waiting for test to start...</p>}
               {results.map((r, i) => (
-                <div key={i} className="flex justify-between items-center text-emerald-400">
-                  <span>[{i+1}] Sequence response from {target}</span>
+                <div key={i} className="flex justify-between items-center animate-in">
+                  <span className="text-slate-400">[{i+1}] Sequence response from {target}</span>
                   <span className={r.status === 'up' ? 'text-emerald-400' : 'text-rose-400'}>
-                    {r.status === 'up' ? `time=${r.time}ms` : 'Request Timeout'}
+                    {r.status === 'up' ? `time=${r.time}ms` : 'Request Timeout / Blocked'}
                   </span>
                 </div>
               ))}
@@ -114,8 +125,8 @@ export const PingTest: React.FC<PingTestProps> = ({ setActions }) => {
 
       <div className="lg:col-span-5 space-y-8">
         <div className="bg-white rounded-[2rem] border border-border-light shadow-sm p-10 flex flex-col items-center justify-center text-center gap-6">
-           <div className="size-24 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100 shadow-inner">
-              <span className="material-symbols-outlined text-4xl">speed</span>
+           <div className={`size-24 rounded-full flex items-center justify-center border shadow-inner transition-colors ${packetLoss > 50 ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
+              <span className="material-symbols-outlined text-4xl">{packetLoss > 50 ? 'signal_disconnected' : 'speed'}</span>
            </div>
            <div className="space-y-1">
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Average Latency</p>
@@ -124,17 +135,19 @@ export const PingTest: React.FC<PingTestProps> = ({ setActions }) => {
            <div className="flex gap-4 w-full">
               <div className="flex-1 bg-slate-50 p-4 rounded-2xl border border-slate-100">
                  <p className="text-[8px] font-black uppercase text-slate-400 mb-1">Packet Loss</p>
-                 <p className="font-bold">{results.length > 0 ? Math.round((results.filter(r => r.status === 'down').length / results.length) * 100) : 0}%</p>
+                 <p className={`font-bold ${packetLoss > 0 ? 'text-rose-500' : 'text-emerald-600'}`}>{packetLoss}%</p>
               </div>
               <div className="flex-1 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                 <p className="text-[8px] font-black uppercase text-slate-400 mb-1">Stability</p>
-                 <p className="font-bold text-emerald-600">Stable</p>
+                 <p className="text-[8px] font-black uppercase text-slate-400 mb-1">Status</p>
+                 <p className={`font-bold ${packetLoss < 100 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                   {packetLoss < 100 ? 'Connected' : 'Unreachable'}
+                 </p>
               </div>
            </div>
         </div>
 
         {analysis && (
-          <div className="bg-emerald-900 text-white rounded-[2rem] p-8 shadow-xl animate-in fade-in slide-in-from-bottom-4">
+          <div className="bg-emerald-900 text-white rounded-[2rem] p-8 shadow-xl slide-in">
             <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-300 mb-4 flex items-center gap-2">
               <span className="material-symbols-outlined text-[16px]">verified</span> Network Analysis
             </h4>
