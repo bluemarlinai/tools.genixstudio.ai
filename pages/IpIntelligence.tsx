@@ -14,20 +14,38 @@ export const IpIntelligence: React.FC<IpIntelligenceProps> = ({ setActions }) =>
   const [aiReport, setAiReport] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
 
+  // Helper to get only the IP address as a fallback
+  const getBasicIp = async () => {
+    try {
+      const res = await fetch('https://api.ipify.org?format=json');
+      if (res.ok) {
+        const d = await res.json();
+        return d.ip;
+      }
+    } catch (e) {
+      return null;
+    }
+    return null;
+  };
+
   const fetchIpData = async (targetIp?: string) => {
     setLoading(true);
     setError(null);
+    setData(null);
+    
     try {
+      // Primary service: ipapi.co (supports CORS)
       const url = targetIp ? `https://ipapi.co/${targetIp}/json/` : `https://ipapi.co/json/`;
       const response = await fetch(url);
       
       if (!response.ok) {
-        throw new Error('IP API lookup failed. Service might be temporarily unavailable or blocked.');
+        throw new Error(`API returned ${response.status}`);
       }
       
       const result = await response.json();
       
       if (result.error) {
+        // If it's a rate limit or specific error from the provider
         throw new Error(result.reason || 'IP Lookup failed');
       }
       
@@ -35,7 +53,18 @@ export const IpIntelligence: React.FC<IpIntelligenceProps> = ({ setActions }) =>
       if (!targetIp) setIp(result.ip);
     } catch (e: any) {
       console.error('IP Intelligence Error:', e);
-      setError(e.message || 'Failed to fetch IP data. Please check your network or try a manual lookup.');
+      
+      // Fallback: If we just need the user's IP and the rich service failed
+      if (!targetIp) {
+        const basicIp = await getBasicIp();
+        if (basicIp) {
+          setIp(basicIp);
+          setError('Detailed lookup blocked (likely by an ad-blocker), but your IP was detected.');
+          return;
+        }
+      }
+      
+      setError('Connection failed. This API may be blocked by your browser extensions or network firewall. Try a manual lookup.');
     } finally {
       setLoading(false);
     }
@@ -67,87 +96,88 @@ export const IpIntelligence: React.FC<IpIntelligenceProps> = ({ setActions }) =>
       <button 
         onClick={generateRiskReport}
         disabled={loadingAi || !data}
-        className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-4 py-2 rounded-xl text-xs font-black hover:bg-emerald-100 transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50"
+        className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-3 py-1.5 rounded-lg text-[10px] font-black hover:bg-emerald-100 transition-all flex items-center gap-1.5 active:scale-95 disabled:opacity-50"
       >
-        <span className="material-symbols-outlined text-[18px]">security</span> 
-        {loadingAi ? 'Analyzing...' : 'AI Security Audit'}
+        <span className="material-symbols-outlined text-sm">security</span> 
+        {loadingAi ? 'Analyzing...' : 'AI Audit'}
       </button>
     );
   }, [data, loadingAi]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      <div className="lg:col-span-8 space-y-6">
-        <div className="bg-white rounded-[2.5rem] border border-border-light shadow-sm p-10 space-y-8">
-          <div className="space-y-4">
-            <label className="text-xs font-black uppercase tracking-widest text-text-secondary">Target IP Address</label>
-            <div className="flex gap-3">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
+      <div className="lg:col-span-8 space-y-3">
+        <div className="bg-white rounded-xl border border-border-light shadow-sm p-4 space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-[9px] font-black uppercase tracking-widest text-text-secondary ml-1">IP Target</label>
+            <div className="flex gap-2">
               <input 
                 type="text" 
                 value={ip}
                 onChange={(e) => setIp(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && fetchIpData(ip)}
-                className="flex-1 bg-slate-50 border-none rounded-2xl px-6 py-4 font-mono font-bold text-lg outline-none focus:ring-2 focus:ring-emerald-100"
-                placeholder="e.g. 8.8.8.8"
+                className="flex-1 bg-slate-50 border-none rounded-lg px-3 py-1.5 font-mono font-bold text-xs outline-none focus:ring-1 focus:ring-emerald-200"
+                placeholder="Enter IP address..."
               />
               <button 
                 onClick={() => fetchIpData(ip)}
                 disabled={loading || !ip}
-                className="bg-emerald-600 text-white font-black px-8 rounded-2xl shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition-all active:scale-95 disabled:opacity-50 min-w-[120px]"
+                className="bg-emerald-600 text-white font-black px-4 rounded-lg shadow-sm hover:bg-emerald-700 transition-all active:scale-95 disabled:opacity-50 text-[10px] uppercase tracking-wider"
               >
                 {loading ? '...' : 'Lookup'}
               </button>
             </div>
-            {error && <p className="text-xs text-red-500 font-medium px-2">{error}</p>}
+            {error && <p className="text-[9px] text-rose-500 font-bold px-1 animate-pulse">{error}</p>}
           </div>
 
           {data ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 animate-in">
                {[
-                 { label: 'Location', value: `${data.city || 'N/A'}, ${data.region || 'N/A'}, ${data.country_name || 'N/A'}`, icon: 'location_on' },
-                 { label: 'Organization / ISP', value: data.org || 'Unknown', icon: 'business' },
-                 { label: 'Timezone', value: data.timezone || 'N/A', icon: 'schedule' },
+                 { label: 'Location', value: `${data.city || 'N/A'}, ${data.country_code || 'N/A'}`, icon: 'location_on' },
+                 { label: 'Network', value: data.org || 'Unknown', icon: 'business' },
                  { label: 'ASN', value: data.asn || 'N/A', icon: 'router' },
-                 { label: 'Coordinates', value: data.latitude ? `${data.latitude}, ${data.longitude}` : 'N/A', icon: 'explore' },
-                 { label: 'Currency', value: data.currency_name ? `${data.currency_name} (${data.currency})` : 'N/A', icon: 'payments' },
+                 { label: 'Region', value: data.region || 'N/A', icon: 'map' },
+                 { label: 'Lat/Long', value: data.latitude ? `${data.latitude}, ${data.longitude}` : 'N/A', icon: 'explore' },
+                 { label: 'Currency', value: data.currency || 'N/A', icon: 'payments' },
                ].map((item, idx) => (
-                 <div key={idx} className="bg-slate-50 p-6 rounded-3xl border border-slate-100 flex items-center gap-4">
-                    <div className="size-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-emerald-600 shadow-sm">
-                       <span className="material-symbols-outlined text-[24px]">{item.icon}</span>
+                 <div key={idx} className="bg-slate-50/50 p-2 rounded-lg border border-slate-100 flex items-center gap-2">
+                    <div className="size-7 rounded-md bg-white border border-slate-100 flex items-center justify-center text-emerald-600 shadow-sm shrink-0">
+                       <span className="material-symbols-outlined text-base">{item.icon}</span>
                     </div>
-                    <div>
-                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{item.label}</p>
-                       <p className="font-bold text-text-main truncate max-w-[200px]">{item.value}</p>
+                    <div className="min-w-0">
+                       <p className="text-[8px] font-black uppercase tracking-widest text-slate-400 leading-none mb-0.5">{item.label}</p>
+                       <p className="font-bold text-[10px] text-text-main truncate leading-tight">{item.value}</p>
                     </div>
                  </div>
                ))}
             </div>
           ) : !loading && (
-            <div className="py-20 text-center text-slate-400 font-light flex flex-col items-center gap-3">
-              <span className="material-symbols-outlined text-4xl opacity-20">travel_explore</span>
-              <p>Enter an IP to start intelligence gathering</p>
+            <div className="py-8 text-center text-slate-300 font-light flex flex-col items-center gap-2">
+              <span className="material-symbols-outlined text-3xl opacity-20">sensors</span>
+              <p className="text-[10px] font-bold uppercase tracking-widest">Awaiting IP Data</p>
             </div>
           )}
         </div>
       </div>
 
-      <div className="lg:col-span-4 space-y-6">
-        <div className="bg-white rounded-[2rem] border shadow-sm p-8 flex flex-col items-center justify-center text-center gap-4 bg-emerald-900 text-white">
-           <div className="size-16 rounded-full bg-emerald-800 flex items-center justify-center">
-              <span className="material-symbols-outlined text-3xl">public</span>
+      <div className="lg:col-span-4 space-y-3">
+        <div className="bg-emerald-900 text-white rounded-xl shadow-sm p-4 flex flex-col items-center justify-center text-center gap-2">
+           <div className="size-8 rounded-full bg-emerald-800 flex items-center justify-center">
+              <span className="material-symbols-outlined text-lg">public</span>
            </div>
            <div>
-              <p className="text-[10px] font-black uppercase text-emerald-300">Public Access Node</p>
-              <h3 className="text-2xl font-black">{data?.ip || 'Detecting...'}</h3>
+              <p className="text-[8px] font-black uppercase text-emerald-300 tracking-widest">Current Node</p>
+              <h3 className="text-base font-black font-mono">{ip || 'Detecting...'}</h3>
            </div>
         </div>
 
         {aiReport && (
-          <div className="bg-white rounded-[2rem] border-2 border-emerald-100 p-8 shadow-xl slide-in">
-             <h4 className="text-xs font-black text-emerald-600 uppercase tracking-widest mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-[18px]">verified</span> Security Risk Assessment
+          <div className="bg-white rounded-xl border border-emerald-100 p-4 shadow-sm slide-in overflow-hidden relative">
+             <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-50 rounded-bl-full opacity-50 -mr-4 -mt-4" />
+             <h4 className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-sm">verified</span> Intelligence Report
              </h4>
-             <div className="text-sm font-light text-text-main leading-relaxed space-y-3">
+             <div className="text-[10px] font-light text-text-main leading-relaxed space-y-1.5 relative z-10">
                 {aiReport.split('\n').map((line, i) => <p key={i}>{line}</p>)}
              </div>
           </div>

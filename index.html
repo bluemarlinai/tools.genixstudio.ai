@@ -38,6 +38,11 @@
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 10px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #bdc1c6; }
+    
+    /* Hide scrollbar utility */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
     .notebook-gradient {
       background: linear-gradient(90deg, #4285F4, #9B72CB, #D96570);
       -webkit-background-clip: text;
