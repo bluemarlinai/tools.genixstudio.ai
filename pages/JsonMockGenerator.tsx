@@ -1,39 +1,25 @@
 
 import React, { useState } from 'react';
-import { GoogleGenAI } from "@google/genai";
 import { MockField } from '../types';
 
-const FIELD_TYPES = [
-  'UUID', 'Full Name', 'Email', 'Internet Name', 'Boolean', 'Number', 'Date', 'Paragraph'
-];
-
 export const JsonMockGenerator: React.FC<{ onBack: () => void }> = ({ onBack }) => {
-  const [fields, setFields] = useState<MockField[]>([
+  const [fields] = useState<MockField[]>([
     { id: '1', name: 'id', type: 'UUID', options: 'unique' },
     { id: '2', name: 'username', type: 'Internet Name', options: 'min:5' },
     { id: '3', name: 'email', type: 'Email', options: 'gmail.com' },
     { id: '4', name: 'isAdmin', type: 'Boolean', options: 'prob:0.2' },
   ]);
   const [rowCount, setRowCount] = useState(10);
-  const [output, setOutput] = useState<string>('// Result will appear here after generation...');
+  const [output, setOutput] = useState<string>('// Result will appear here...');
   const [loading, setLoading] = useState(false);
 
-  const generateData = async () => {
+  const generateData = () => {
     setLoading(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-      const schemaDescription = fields.map(f => `${f.name} (${f.type}, options: ${f.options})`).join(', ');
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Generate JSON array with ${rowCount} items: ${schemaDescription}. Return raw JSON.`,
-        config: { responseMimeType: "application/json" }
-      });
-      setOutput(JSON.stringify(JSON.parse(response.text || '[]'), null, 2));
-    } catch (error) {
-      setOutput("// Error generating data.");
-    } finally {
+    // AI generation removed to prevent unauthorized API usage
+    setTimeout(() => {
+      setOutput("// Mock generation disabled.\n// AI processing is currently offline.");
       setLoading(false);
-    }
+    }, 500);
   };
 
   return (
@@ -48,7 +34,7 @@ export const JsonMockGenerator: React.FC<{ onBack: () => void }> = ({ onBack }) 
             {fields.map((field) => (
               <div key={field.id} className="grid grid-cols-12 gap-2 p-2 items-center">
                 <div className="col-span-5">
-                  <input className="w-full bg-slate-50 border-none rounded-lg px-2 py-1 text-xs font-bold" value={field.name} onChange={() => {}} />
+                  <input className="w-full bg-slate-50 border-none rounded-lg px-2 py-1 text-xs font-bold" value={field.name} readOnly />
                 </div>
                 <div className="col-span-7">
                    <p className="text-[10px] text-text-secondary font-medium">{field.type} • {field.options}</p>

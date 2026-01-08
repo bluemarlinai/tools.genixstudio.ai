@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
 
 interface JsonFormatterProps {
   onBack: () => void;
@@ -11,7 +10,6 @@ export const JsonFormatter: React.FC<JsonFormatterProps> = ({ setActions }) => {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const formatJson = () => {
     try {
@@ -23,36 +21,10 @@ export const JsonFormatter: React.FC<JsonFormatterProps> = ({ setActions }) => {
     }
   };
 
-  const aiFixJson = async () => {
-    if (!input.trim()) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `I have a broken or unformatted JSON string: "${input}". Please fix any syntax errors and return ONLY the valid, beautified JSON.`,
-        config: { responseMimeType: "application/json" }
-      });
-      setOutput(JSON.stringify(JSON.parse(response.text || '{}'), null, 2));
-    } catch (e) {
-      setError("AI was unable to fix this JSON. Please check manually.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    setActions(
-      <button 
-        onClick={aiFixJson} 
-        disabled={loading}
-        className="bg-indigo-50 text-indigo-600 border border-indigo-100 px-3 py-1.5 rounded-lg text-[10px] font-black hover:bg-indigo-100 transition-all flex items-center gap-1.5 disabled:opacity-50 active:scale-95"
-      >
-        <span className="material-symbols-outlined text-sm">magic_button</span> AI Fix
-      </button>
-    );
-  }, [input, loading]);
+    // AI Fix removed to prevent unauthorized API usage
+    setActions(null);
+  }, []);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-[450px]">
@@ -70,7 +42,9 @@ export const JsonFormatter: React.FC<JsonFormatterProps> = ({ setActions }) => {
         />
         <div className="p-4 border-t border-border-light bg-slate-50/30 flex gap-2">
           <button onClick={formatJson} className="bg-primary text-white px-4 py-1.5 rounded-lg text-xs font-black hover:bg-primary-hover transition-all active:scale-95 shadow-sm">Format</button>
-          <button onClick={() => setOutput(JSON.stringify(JSON.parse(input)))} className="bg-white border border-border-light px-4 py-1.5 rounded-lg text-xs font-black hover:bg-slate-50 transition-all active:scale-95 shadow-sm">Minify</button>
+          <button onClick={() => {
+            try { setOutput(JSON.stringify(JSON.parse(input))); setError(null); } catch(e: any) { setError(e.message); }
+          }} className="bg-white border border-border-light px-4 py-1.5 rounded-lg text-xs font-black hover:bg-slate-50 transition-all active:scale-95 shadow-sm">Minify</button>
         </div>
       </div>
 

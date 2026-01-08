@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
 
 interface SecureGenProps {
   onBack: () => void;
@@ -15,7 +14,6 @@ export const SecureGen: React.FC<SecureGenProps> = ({ setActions }) => {
   const [includeSymbols, setIncludeSymbols] = useState(true);
   const [password, setPassword] = useState('');
   const [strength, setStrength] = useState(0);
-  const [loading, setLoading] = useState(false);
 
   const generatePassword = () => {
     const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -37,33 +35,10 @@ export const SecureGen: React.FC<SecureGenProps> = ({ setActions }) => {
     setPassword(generated);
   };
 
-  const generateMemorable = async () => {
-    setLoading(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: "Generate a memorable but secure password phrase. Return ONLY the phrase.",
-      });
-      setPassword(response.text || 'AI-Generation-Failed-123!');
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    setActions(
-      <button 
-        onClick={generateMemorable}
-        disabled={loading}
-        className="bg-orange-50 text-orange-600 border border-orange-100 px-3 py-1.5 rounded-lg text-[10px] font-black hover:bg-orange-100 transition-all flex items-center gap-1.5 active:scale-95 disabled:opacity-50"
-      >
-        <span className="material-symbols-outlined text-sm">psychology</span> AI Phrase
-      </button>
-    );
-  }, [loading]);
+    // AI Phrase removed to prevent unauthorized API usage
+    setActions(null);
+  }, []);
 
   useEffect(() => {
     let s = 0;

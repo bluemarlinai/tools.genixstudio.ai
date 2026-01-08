@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
 
 interface DnsLookupProps {
   onBack: () => void;
@@ -27,14 +26,11 @@ export const DnsLookup: React.FC<DnsLookupProps> = ({ setActions }) => {
   const [domain, setDomain] = useState('google.com');
   const [records, setRecords] = useState<DnsRecord[]>([]);
   const [loading, setLoading] = useState(false);
-  const [analysis, setAnalysis] = useState<string | null>(null);
-  const [loadingAnalysis, setLoadingAnalysis] = useState(false);
 
   const lookup = async () => {
     setLoading(true);
     setRecords([]);
     try {
-      // Use Google DNS-over-HTTPS API
       const response = await fetch(`https://dns.google/resolve?name=${domain}&type=ANY`);
       const data = await response.json();
       setRecords(data.Answer || []);
@@ -45,34 +41,10 @@ export const DnsLookup: React.FC<DnsLookupProps> = ({ setActions }) => {
     }
   };
 
-  const analyzeDns = async () => {
-    setLoadingAnalysis(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-      const recordSummary = records.map(r => `${RECORD_TYPES[r.type] || r.type}: ${r.data}`).join('\n');
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Explain these DNS records for ${domain} in simple terms. What services do they point to (e.g. Google Workspace, Cloudflare)? \n\n${recordSummary}`,
-      });
-      setAnalysis(response.text || 'No analysis available.');
-    } catch (e) {
-      setAnalysis("Error analyzing DNS records.");
-    } finally {
-      setLoadingAnalysis(false);
-    }
-  };
-
   useEffect(() => {
-    setActions(
-      <button 
-        onClick={analyzeDns}
-        disabled={loadingAnalysis || records.length === 0}
-        className="bg-blue-50 text-blue-600 border border-blue-100 px-4 py-2 rounded-xl text-xs font-black hover:bg-blue-100 transition-all flex items-center gap-2 disabled:opacity-50 active:scale-95"
-      >
-        <span className="material-symbols-outlined text-[18px]">auto_awesome</span> Interpret Records
-      </button>
-    );
-  }, [records, loadingAnalysis]);
+    // Interpret Records removed to prevent unauthorized API usage
+    setActions(null);
+  }, []);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -144,7 +116,7 @@ export const DnsLookup: React.FC<DnsLookupProps> = ({ setActions }) => {
            </div>
            
            <div className="space-y-4 text-sm text-text-secondary leading-relaxed font-light">
-              <p>DNS (Domain Name System) is the phonebook of the internet. It maps human-readable names like <code className="bg-slate-50 px-1.5 py-0.5 rounded text-blue-600">google.com</code> to machine IP addresses.</p>
+              <p>DNS (Domain Name System) maps human-readable names to machine IP addresses.</p>
               <div className="grid grid-cols-2 gap-3 text-[10px] font-bold uppercase tracking-tighter">
                  <div className="p-3 bg-slate-50 rounded-xl">A: IPv4 Address</div>
                  <div className="p-3 bg-slate-50 rounded-xl">AAAA: IPv6 Address</div>
@@ -153,17 +125,6 @@ export const DnsLookup: React.FC<DnsLookupProps> = ({ setActions }) => {
               </div>
            </div>
         </div>
-
-        {analysis && (
-          <div className="bg-white rounded-[2rem] border-2 border-blue-100 p-8 shadow-xl animate-in fade-in slide-in-from-right-4">
-             <h4 className="text-xs font-black text-blue-600 uppercase tracking-widest mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-[18px]">verified</span> AI Expert Analysis
-             </h4>
-             <div className="prose prose-sm prose-blue font-light text-text-main leading-relaxed">
-                {analysis.split('\n').map((line, i) => <p key={i} className="mb-2">{line}</p>)}
-             </div>
-          </div>
-        )}
       </div>
     </div>
   );

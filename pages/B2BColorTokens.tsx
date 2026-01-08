@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { GoogleGenAI } from "@google/genai";
 
 interface B2BColorTokensProps {
   setActions: (actions: React.ReactNode) => void;
@@ -9,23 +8,22 @@ interface B2BColorTokensProps {
 export const B2BColorTokens: React.FC<B2BColorTokensProps> = ({ setActions }) => {
   const [baseColor, setBaseColor] = useState('#0b57d0');
   const [tokens, setTokens] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
 
-  const generateTokens = async () => {
-    setLoading(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Given a primary B2B brand color "${baseColor}", generate a set of enterprise UI design tokens in JSON format. Include: Success (Green-ish), Warning (Orange/Amber), Error (Red-ish), Info (Blue-ish), and a Neutral Grey scale (5 levels). Ensure they look "stable" and "professional". Only return valid JSON.`,
-        config: { responseMimeType: "application/json" }
-      });
-      setTokens(JSON.parse(response.text || '{}'));
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+  const generateTokens = () => {
+    // AI generation removed to prevent unauthorized API usage
+    setTokens({
+      Success: "#10b981",
+      Warning: "#f59e0b",
+      Error: "#ef4444",
+      Info: "#3b82f6",
+      Neutral: {
+        "Slate 50": "#f8fafc",
+        "Slate 200": "#e2e8f0",
+        "Slate 500": "#64748b",
+        "Slate 800": "#1e293b",
+        "Slate 950": "#020617"
+      }
+    });
   };
 
   const TokenRow = ({ label, color }: { label: string, color: string }) => (
@@ -63,10 +61,9 @@ export const B2BColorTokens: React.FC<B2BColorTokensProps> = ({ setActions }) =>
            </div>
            <button 
              onClick={generateTokens} 
-             disabled={loading}
-             className="w-full bg-primary text-white font-black py-3 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50 text-xs"
+             className="w-full bg-primary text-white font-black py-3 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-all text-xs"
            >
-             {loading ? 'Analyzing Theme...' : 'GENERATE TOKENS'}
+             PREVIEW TOKENS
            </button>
         </div>
 
@@ -83,10 +80,10 @@ export const B2BColorTokens: React.FC<B2BColorTokensProps> = ({ setActions }) =>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in slide-in">
             <div className="space-y-3">
               <h3 className="text-[10px] font-black text-text-secondary uppercase ml-1">Functional Tokens</h3>
-              <TokenRow label="Success" color={tokens.Success || '#10b981'} />
-              <TokenRow label="Warning" color={tokens.Warning || '#f59e0b'} />
-              <TokenRow label="Error" color={tokens.Error || '#ef4444'} />
-              <TokenRow label="Info" color={tokens.Info || '#3b82f6'} />
+              <TokenRow label="Success" color={tokens.Success} />
+              <TokenRow label="Warning" color={tokens.Warning} />
+              <TokenRow label="Error" color={tokens.Error} />
+              <TokenRow label="Info" color={tokens.Info} />
             </div>
             <div className="space-y-3">
               <h3 className="text-[10px] font-black text-text-secondary uppercase ml-1">Neutral Palette</h3>
@@ -97,8 +94,8 @@ export const B2BColorTokens: React.FC<B2BColorTokensProps> = ({ setActions }) =>
           </div>
         ) : (
           <div className="h-64 flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-3xl text-slate-300">
-             <span className="material-symbols-outlined text-4xl mb-2 opacity-50">auto_fix_high</span>
-             <p className="text-xs font-bold uppercase tracking-widest opacity-50">Run Engine to Preview</p>
+             <span className="material-symbols-outlined text-4xl mb-2 opacity-50">palette</span>
+             <p className="text-xs font-bold uppercase tracking-widest opacity-50">Preview Basic Theme Tokens</p>
           </div>
         )}
       </div>

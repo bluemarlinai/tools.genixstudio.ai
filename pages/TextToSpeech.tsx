@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { GoogleGenAI, Modality } from "@google/genai";
 
 const VOICES = [
   { id: 'Kore', name: 'Kore (Cheerful)' },
@@ -12,28 +11,14 @@ export const TextToSpeech: React.FC<{ onBack: () => void }> = () => {
   const [text, setText] = useState('');
   const [selectedVoice, setSelectedVoice] = useState('Kore');
   const [loading, setLoading] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
-  const generateSpeech = async () => {
-    if (!text.trim()) return;
+  const generateSpeech = () => {
     setLoading(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash-preview-tts",
-        contents: [{ parts: [{ text: text }] }],
-        config: {
-          responseModalities: [Modality.AUDIO],
-          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: selectedVoice } } },
-        },
-      });
-      const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-      if (base64Audio) setAudioUrl(`data:audio/wav;base64,${base64Audio}`);
-    } catch (e) {
-      console.error(e);
-    } finally {
+    // AI TTS generation removed to prevent unauthorized API usage
+    setTimeout(() => {
       setLoading(false);
-    }
+      alert("TTS generation is currently disabled to optimize system resources.");
+    }, 500);
   };
 
   return (
@@ -42,7 +27,7 @@ export const TextToSpeech: React.FC<{ onBack: () => void }> = () => {
         <textarea 
           value={text} onChange={(e) => setText(e.target.value)}
           className="w-full h-80 bg-slate-50 border-none rounded-3xl p-8 text-xl outline-none resize-none shadow-inner"
-          placeholder="Enter text to speak..."
+          placeholder="Enter text (Feature offline)..."
         />
         <div className="flex flex-wrap gap-3">
           {VOICES.map(v => (
@@ -57,14 +42,6 @@ export const TextToSpeech: React.FC<{ onBack: () => void }> = () => {
             {loading ? 'Synthesizing...' : 'Speak'}
           </button>
         </div>
-      </div>
-      <div className="lg:col-span-4">
-        {audioUrl && (
-          <div className="bg-white p-8 rounded-[2rem] border-2 border-primary/20 shadow-xl animate-in zoom-in">
-             <h4 className="text-xs font-black text-primary uppercase mb-4">Output Ready</h4>
-             <audio controls src={audioUrl} className="w-full" />
-          </div>
-        )}
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { GoogleGenAI } from "@google/genai";
 
 interface ApiRoute {
   id: string;
@@ -20,7 +19,6 @@ export const MockApiBuilder: React.FC<MockApiBuilderProps> = ({ onBack, setActio
     { id: '1', path: '/v1/users', method: 'GET', response: '[\n  { "id": 1, "name": "John Doe" }\n]', description: 'List all users' }
   ]);
   const [selectedRouteId, setSelectedRouteId] = useState<string>('1');
-  const [loading, setLoading] = useState(false);
   const [showCode, setShowCode] = useState<'fetch' | 'express'>('fetch');
 
   const selectedRoute = routes.find(r => r.id === selectedRouteId) || routes[0];
@@ -47,23 +45,6 @@ export const MockApiBuilder: React.FC<MockApiBuilderProps> = ({ onBack, setActio
     const newRoutes = routes.filter(r => r.id !== id);
     setRoutes(newRoutes);
     setSelectedRouteId(newRoutes[0].id);
-  };
-
-  const aiPopulate = async () => {
-    setLoading(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Generate a realistic JSON response for a ${selectedRoute.method} request to the path "${selectedRoute.path}". The purpose is: ${selectedRoute.description}. Return ONLY the raw JSON.`,
-        config: { responseMimeType: "application/json" }
-      });
-      updateRoute('response', JSON.stringify(JSON.parse(response.text || '{}'), null, 2));
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const generateExpressCode = () => {
@@ -157,13 +138,7 @@ export const MockApiBuilder: React.FC<MockApiBuilderProps> = ({ onBack, setActio
           <div className="bg-white rounded-[2rem] border border-border-light shadow-sm flex flex-col overflow-hidden flex-1 min-h-0">
             <div className="px-6 py-4 border-b border-border-light bg-slate-50/50 flex justify-between items-center">
               <h3 className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Mock Data (JSON)</h3>
-              <button 
-                onClick={aiPopulate}
-                disabled={loading}
-                className="text-[10px] bg-indigo-600 text-white px-4 py-1.5 rounded-full font-black flex items-center gap-2 hover:bg-indigo-700 disabled:opacity-50 transition-all shadow-md active:scale-95"
-              >
-                <span className="material-symbols-outlined text-[14px]">magic_button</span> {loading ? 'Synthesizing...' : 'AI Generate Body'}
-              </button>
+              {/* AI Populate removed to prevent unauthorized API usage */}
             </div>
             <textarea
               value={selectedRoute.response}

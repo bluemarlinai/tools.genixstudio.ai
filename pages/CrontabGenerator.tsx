@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
 
 interface CrontabGeneratorProps {
   onBack: () => void;
@@ -9,37 +8,11 @@ interface CrontabGeneratorProps {
 
 export const CrontabGenerator: React.FC<CrontabGeneratorProps> = ({ onBack, setActions }) => {
   const [expression, setExpression] = useState('* * * * *');
-  const [explanation, setExplanation] = useState('Runs every minute of every day.');
-  const [loading, setLoading] = useState(false);
-
-  const explainExpr = async () => {
-    setLoading(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Explain what this cron expression means in human language: "${expression}"`,
-      });
-      setExplanation(response.text || 'Unable to explain.');
-    } catch (e) {
-      setExplanation('Validation failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    setActions(
-      <button 
-        onClick={explainExpr}
-        disabled={loading}
-        className="bg-primary text-white px-5 py-2.5 rounded-xl text-[10px] font-black flex items-center gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50 uppercase tracking-widest"
-      >
-        <span className="material-symbols-outlined text-[18px]">psychology</span>
-        {loading ? 'Analyzing...' : 'AI Explain'}
-      </button>
-    );
-  }, [expression, loading]);
+    // AI Explain removed to prevent unauthorized API usage
+    setActions(null);
+  }, []);
 
   const presets = [
     { name: 'Every minute', val: '* * * * *' },
@@ -84,9 +57,9 @@ export const CrontabGenerator: React.FC<CrontabGeneratorProps> = ({ onBack, setA
           <span className="material-symbols-outlined text-[32px]">info</span>
         </div>
         <div className="space-y-2">
-          <h3 className="text-sm font-black uppercase tracking-widest text-indigo-400">Human Readable</h3>
-          <p className="text-2xl font-display font-medium text-text-main leading-relaxed">
-            "{explanation}"
+          <h3 className="text-sm font-black uppercase tracking-widest text-indigo-400">Status</h3>
+          <p className="text-xl font-display font-medium text-text-main leading-relaxed">
+            AI Explanations are currently disabled to optimize performance.
           </p>
         </div>
       </div>

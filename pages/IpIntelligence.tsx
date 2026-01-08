@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
 
 interface IpIntelligenceProps {
   setActions: (actions: React.ReactNode) => void;
@@ -11,10 +10,7 @@ export const IpIntelligence: React.FC<IpIntelligenceProps> = ({ setActions }) =>
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [aiReport, setAiReport] = useState<string | null>(null);
-  const [loadingAi, setLoadingAi] = useState(false);
 
-  // Helper to get only the IP address as a fallback
   const getBasicIp = async () => {
     try {
       const res = await fetch('https://api.ipify.org?format=json');
@@ -34,75 +30,36 @@ export const IpIntelligence: React.FC<IpIntelligenceProps> = ({ setActions }) =>
     setData(null);
     
     try {
-      // Primary service: ipapi.co (supports CORS)
       const url = targetIp ? `https://ipapi.co/${targetIp}/json/` : `https://ipapi.co/json/`;
       const response = await fetch(url);
       
-      if (!response.ok) {
-        throw new Error(`API returned ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`API returned ${response.status}`);
       
       const result = await response.json();
-      
-      if (result.error) {
-        // If it's a rate limit or specific error from the provider
-        throw new Error(result.reason || 'IP Lookup failed');
-      }
+      if (result.error) throw new Error(result.reason || 'IP Lookup failed');
       
       setData(result);
       if (!targetIp) setIp(result.ip);
     } catch (e: any) {
-      console.error('IP Intelligence Error:', e);
-      
-      // Fallback: If we just need the user's IP and the rich service failed
       if (!targetIp) {
         const basicIp = await getBasicIp();
         if (basicIp) {
           setIp(basicIp);
-          setError('Detailed lookup blocked (likely by an ad-blocker), but your IP was detected.');
+          setError('Detailed lookup failed, showing basic IP detection.');
           return;
         }
       }
-      
-      setError('Connection failed. This API may be blocked by your browser extensions or network firewall. Try a manual lookup.');
+      setError('Connection failed. Service may be blocked.');
     } finally {
       setLoading(false);
     }
   };
 
-  const generateRiskReport = async () => {
-    if (!data) return;
-    setLoadingAi(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Analyze this IP data for potential risks: ${JSON.stringify(data)}. Is it a known data center? What is the reputation of the ISP (${data.org})? Provide a brief security risk assessment score (1-10) and explanation.`,
-      });
-      setAiReport(response.text || 'No report generated.');
-    } catch (e) {
-      setAiReport("Unable to generate AI report. Gemini API may be unreachable.");
-    } finally {
-      setLoadingAi(false);
-    }
-  };
-
   useEffect(() => {
     fetchIpData();
+    // AI Audit removed to prevent unauthorized API usage
+    setActions(null);
   }, []);
-
-  useEffect(() => {
-    setActions(
-      <button 
-        onClick={generateRiskReport}
-        disabled={loadingAi || !data}
-        className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-3 py-1.5 rounded-lg text-[10px] font-black hover:bg-emerald-100 transition-all flex items-center gap-1.5 active:scale-95 disabled:opacity-50"
-      >
-        <span className="material-symbols-outlined text-sm">security</span> 
-        {loadingAi ? 'Analyzing...' : 'AI Audit'}
-      </button>
-    );
-  }, [data, loadingAi]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
@@ -170,18 +127,6 @@ export const IpIntelligence: React.FC<IpIntelligenceProps> = ({ setActions }) =>
               <h3 className="text-base font-black font-mono">{ip || 'Detecting...'}</h3>
            </div>
         </div>
-
-        {aiReport && (
-          <div className="bg-white rounded-xl border border-emerald-100 p-4 shadow-sm slide-in overflow-hidden relative">
-             <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-50 rounded-bl-full opacity-50 -mr-4 -mt-4" />
-             <h4 className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-sm">verified</span> Intelligence Report
-             </h4>
-             <div className="text-[10px] font-light text-text-main leading-relaxed space-y-1.5 relative z-10">
-                {aiReport.split('\n').map((line, i) => <p key={i}>{line}</p>)}
-             </div>
-          </div>
-        )}
       </div>
     </div>
   );

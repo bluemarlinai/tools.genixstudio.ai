@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
 
 interface MarkdownEditorProps {
   onBack: () => void;
@@ -8,37 +7,12 @@ interface MarkdownEditorProps {
 }
 
 export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ setActions }) => {
-  const [content, setContent] = useState('# ToolPortal\n\nWelcome to the **Ultimate Portal**. \n\n```mermaid\ngraph LR\nA[Input] --> B(Process) --> C[Output]\n```');
-  const [loading, setLoading] = useState(false);
-
-  const aiImprove = async () => {
-    setLoading(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Improve and polish the following markdown content while keeping its core meaning and structure: \n\n${content}`,
-      });
-      setContent(response.text || content);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [content, setContent] = useState('# ToolPortal\n\nWelcome to the **Workstation**. \n\n```mermaid\ngraph LR\nA[Input] --> B(Process) --> C[Output]\n```');
 
   useEffect(() => {
-    setActions(
-      <button 
-        onClick={aiImprove}
-        disabled={loading}
-        className="bg-primary text-white px-5 py-2.5 rounded-xl text-[10px] font-black flex items-center gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50 uppercase tracking-widest"
-      >
-        <span className="material-symbols-outlined text-[18px]">magic_button</span>
-        {loading ? 'Refining...' : 'AI Refine'}
-      </button>
-    );
-  }, [content, loading]);
+    // AI Refine removed to prevent unauthorized API usage
+    setActions(null);
+  }, []);
 
   return (
     <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8 h-[600px]">

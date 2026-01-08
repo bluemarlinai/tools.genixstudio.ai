@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
 
 interface PingTestProps {
   onBack: () => void;
@@ -11,21 +10,16 @@ export const PingTest: React.FC<PingTestProps> = ({ setActions }) => {
   const [target, setTarget] = useState('www.google.com');
   const [results, setResults] = useState<{ time: number; status: 'up' | 'down' | 'error' }[]>([]);
   const [isPinging, setIsPinging] = useState(false);
-  const [analysis, setAnalysis] = useState<string | null>(null);
-  const [loadingAnalysis, setLoadingAnalysis] = useState(false);
 
   const startPing = async () => {
     setIsPinging(true);
     setResults([]);
     
-    // Normalize target URL for a basic reachability check
     let testUrl = target;
     if (!testUrl.startsWith('http')) {
         testUrl = 'https://' + testUrl;
     }
 
-    // Browser pinging is limited by CORS, but 'no-cors' allows a basic opaque request
-    // to measure the time it takes for a server to respond at all.
     for (let i = 0; i < 4; i++) {
       const startTime = Date.now();
       try {
@@ -42,7 +36,6 @@ export const PingTest: React.FC<PingTestProps> = ({ setActions }) => {
         const endTime = Date.now();
         setResults(prev => [...prev, { time: endTime - startTime, status: 'up' }]);
       } catch (e: any) {
-        console.warn(`Ping attempt ${i+1} failed:`, e.name);
         setResults(prev => [...prev, { time: 0, status: e.name === 'AbortError' ? 'down' : 'error' }]);
       }
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -50,37 +43,10 @@ export const PingTest: React.FC<PingTestProps> = ({ setActions }) => {
     setIsPinging(false);
   };
 
-  const analyzeNetwork = async () => {
-    setLoadingAnalysis(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-      const stats = results.length > 0 
-        ? `Latency Sequence: ${results.map(r => r.status === 'up' ? r.time + 'ms' : 'Timeout').join(', ')}` 
-        : 'No data.';
-        
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Analyze this ping sequence for ${target}: ${stats}. What does this suggest about the server reachability or network jitter? Keep it brief and professional.`,
-      });
-      setAnalysis(response.text || 'Analysis empty.');
-    } catch (e) {
-      setAnalysis("AI Analysis unavailable at this time.");
-    } finally {
-      setLoadingAnalysis(false);
-    }
-  };
-
   useEffect(() => {
-    setActions(
-      <button 
-        onClick={analyzeNetwork}
-        disabled={loadingAnalysis || results.length === 0}
-        className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-3 py-1.5 rounded-lg text-[10px] font-black hover:bg-emerald-100 transition-all flex items-center gap-1.5 disabled:opacity-50 active:scale-95"
-      >
-        <span className="material-symbols-outlined text-sm">analytics</span> AI Insights
-      </button>
-    );
-  }, [results, loadingAnalysis]);
+    // AI Insights removed to prevent unauthorized API usage
+    setActions(null);
+  }, []);
 
   const avgLatency = results.length > 0 && results.some(r => r.status === 'up') 
     ? Math.round(results.filter(r => r.status === 'up').reduce((acc, r) => acc + r.time, 0) / results.filter(r => r.status === 'up').length) 
@@ -155,17 +121,6 @@ export const PingTest: React.FC<PingTestProps> = ({ setActions }) => {
               </div>
            </div>
         </div>
-
-        {analysis && (
-          <div className="bg-emerald-900 text-white rounded-xl p-4 shadow-sm slide-in border border-emerald-800">
-            <h4 className="text-[9px] font-black uppercase tracking-widest text-emerald-300 mb-2 flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-sm">verified</span> Network Context
-            </h4>
-            <p className="text-[10px] font-light leading-relaxed opacity-90">
-              {analysis}
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
