@@ -2,26 +2,22 @@
 import { Tool } from '../types';
 
 export const TOOLS: Tool[] = [
-  // Life & Social (New High Priority)
-  { id: 'english-name', name: 'English Name Gen', description: 'AI-powered English name generator based on your personality and preferences.', category: 'Life', icon: 'face_6', color: 'bg-rose-50 text-rose-600', hot: true },
-  { id: 'smart-translate', name: 'Context Translator', description: 'Smart translation that adapts to formal, casual, or technical contexts.', category: 'Life', icon: 'translate', color: 'bg-blue-50 text-blue-600', hot: true },
-  { id: 'travel-list', name: 'Travel Checklist', description: 'AI-generated packing lists based on your destination and weather.', category: 'Life', icon: 'luggage', color: 'bg-emerald-50 text-emerald-600' },
-  { id: 'decision-hub', name: 'Decision Maker', description: 'Can\'t decide? Let AI help you make a choice or spin the virtual wheel.', category: 'Life', icon: 'casino', color: 'bg-amber-50 text-amber-600' },
-
-  // Social & Writing
-  { id: 'social-bio', name: 'Bio Architect', description: 'Generate engaging bios for Instagram, LinkedIn, or Twitter in seconds.', category: 'Social', icon: 'auto_awesome', color: 'bg-purple-50 text-purple-600', hot: true },
-  { id: 'emoji-search', name: 'Emoji Kitchen', description: 'Find the perfect emoji or search for creative emoji combinations.', category: 'Social', icon: 'mood', color: 'bg-yellow-50 text-yellow-600' },
-  { id: 'word-counter', name: 'Text Analytics', description: 'Deep analysis of text, including readability and reading time.', category: 'Writing', icon: 'bar_chart', color: 'bg-slate-50 text-slate-600' },
-  { id: 'lorem-ipsum', name: 'Placeholder Gen', description: 'Professional filler text for mockups and document design.', category: 'Writing', icon: 'format_quote', color: 'bg-slate-50 text-slate-500' },
+  // Life & Social (Western Pop Favorites)
+  { id: 'ui-roaster', name: 'UI Roaster', description: 'Let AI brutally (but hilariously) critique your designs or ideas.', category: 'Design', icon: 'local_fire_department', color: 'bg-orange-50 text-orange-600', hot: true },
+  { id: 'date-planner', name: 'Date Night AI', description: 'Custom date night itineraries based on your city, budget, and vibe.', category: 'Life', icon: 'favorite', color: 'bg-pink-50 text-pink-600', hot: true },
+  { id: 'idea-validator', name: 'Idea Validator', description: 'Pitch your startup idea and get a critical analysis of its potential.', category: 'Writing', icon: 'lightbulb', color: 'bg-amber-50 text-amber-600' },
+  
+  // Existing Life & Social
+  { id: 'corporate-polish', name: 'Corporate Polish', description: 'Translate "too honest" thoughts into professional office speak.', category: 'Writing', icon: 'mark_email_read', color: 'bg-indigo-50 text-indigo-600' },
+  { id: 'pet-name', name: 'Pet Name Gen', description: 'Find the perfect name for your furry friend.', category: 'Life', icon: 'pets', color: 'bg-orange-50 text-orange-600' },
+  { id: 'english-name', name: 'English Name Lab', description: 'AI-powered English name generator based on your vibe.', category: 'Life', icon: 'face_6', color: 'bg-rose-50 text-rose-600' },
 
   // Design & Media
-  { id: 'gradient-gen', name: 'Gradient Lab', description: 'Create beautiful CSS gradients with precision control.', category: 'Design', icon: 'gradient', color: 'bg-indigo-50 text-indigo-600' },
-  { id: 'qr-generator', name: 'QR Code Studio', description: 'Generate custom QR codes with logos and style.', category: 'Media', icon: 'qr_code_2', color: 'bg-violet-50 text-violet-600' },
-  { id: 'image-resizer', name: 'Image Studio', description: 'Resize and optimize images for various platforms.', category: 'Media', icon: 'photo_size_select_large', color: 'bg-rose-50 text-rose-600' },
-
-  // Development & Technical
-  { id: 'json-formatter', name: 'JSON Beautifier', description: 'Format and validate JSON with syntax highlighting.', category: 'Development', icon: 'code', color: 'bg-indigo-50 text-indigo-600' },
-  { id: 'diff-checker', name: 'Diff Viewer', description: 'Compare two text blocks to find differences instantly.', category: 'Development', icon: 'compare', color: 'bg-slate-50 text-slate-700' },
-  { id: 'ip-intelligence', name: 'IP Intelligence', description: 'Check IP details, location, and network safety.', category: 'Networking', icon: 'public', color: 'bg-emerald-50 text-emerald-600' },
-  { id: 'password-gen', name: 'SecureGen', description: 'Generate complex, ultra-secure passwords.', category: 'Security', icon: 'security', color: 'bg-orange-50 text-orange-600' },
+  { id: 'palette-gen', name: 'Color Palette', description: 'Generate brand-ready color schemes with ease.', category: 'Design', icon: 'palette', color: 'bg-blue-50 text-blue-600' },
+  { id: 'qr-generator', name: 'QR Studio', description: 'Custom QR codes for URLs or text.', category: 'Media', icon: 'qr_code_2', color: 'bg-slate-50 text-slate-800' },
+  
+  // Development
+  { id: 'json-formatter', name: 'JSON Beautifier', description: 'Format, validate and minify JSON data.', category: 'Development', icon: 'code', color: 'bg-blue-50 text-blue-700' },
+  { id: 'sql-formatter', name: 'SQL Formatter', description: 'Beautify messy SQL queries instantly.', category: 'Development', icon: 'database', color: 'bg-slate-50 text-slate-700' },
+  { id: 'password-gen', name: 'SecureGen', description: 'Military-grade password generation.', category: 'Security', icon: 'security', color: 'bg-orange-50 text-orange-600' },
 ];

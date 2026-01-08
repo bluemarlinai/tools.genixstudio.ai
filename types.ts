@@ -11,7 +11,6 @@ export interface Tool {
   hot?: boolean;
 }
 
-// Added missing MockField interface to fix import error in JsonMockGenerator
 export interface MockField {
   id: string;
   name: string;
@@ -28,4 +27,5 @@ export type Page =
   | 'dns-lookup' | 'ip-intelligence' | 'subnet-calc' | 'gradient-gen' | 'palette-gen' | 'b2b-tokens'
   | 'diff-checker' | 'unix-timestamp' | 'json-to-ts' | 'sql-formatter' | 'wcag-contrast' 
   | 'aspect-ratio' | 'box-shadow' | 'hasher' | 'markdown-table' | 'lorem-ipsum'
-  | 'english-name' | 'social-bio' | 'smart-translate' | 'decision-hub' | 'travel-list' | 'emoji-search';
+  | 'english-name' | 'social-bio' | 'corporate-polish' | 'pet-name' | 'ingredient-swap'
+  | 'ui-roaster' | 'date-planner' | 'idea-validator';

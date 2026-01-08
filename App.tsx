@@ -49,6 +49,14 @@ import { MarkdownTableMaker } from './pages/MarkdownTableMaker';
 import { LoremIpsumGen } from './pages/LoremIpsumGen';
 import { EnglishNameGen } from './pages/EnglishNameGen';
 import { SocialBioGen } from './pages/SocialBioGen';
+import { CorporatePolish } from './pages/CorporatePolish';
+import { PetNameGen } from './pages/PetNameGen';
+import { IngredientSwap } from './pages/IngredientSwap';
+
+// New Pop Culture Tools
+import { UiRoaster } from './pages/UiRoaster';
+import { DatePlanner } from './pages/DatePlanner';
+import { IdeaValidator } from './pages/IdeaValidator';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -62,6 +70,12 @@ const App: React.FC = () => {
 
   const renderToolBody = () => {
     switch (currentPage) {
+      case 'ui-roaster': return <UiRoaster />;
+      case 'date-planner': return <DatePlanner />;
+      case 'idea-validator': return <IdeaValidator />;
+      case 'corporate-polish': return <CorporatePolish />;
+      case 'pet-name': return <PetNameGen />;
+      case 'ingredient-swap': return <IngredientSwap />;
       case 'english-name': return <EnglishNameGen />;
       case 'social-bio': return <SocialBioGen />;
       case 'json-mock': return <JsonMockGenerator onBack={onBack} />;
@@ -141,8 +155,9 @@ const App: React.FC = () => {
               <aside className="hidden xl:block w-72 shrink-0">
                 <div className="sticky top-24 space-y-4">
                   <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 text-center space-y-1.5">
-                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/60">Universal Access</p>
-                    <p className="text-[11px] font-medium text-text-secondary leading-tight">Fast tools for everyday life.</p>
+                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/60">Community</p>
+                    <p className="text-[11px] font-medium text-text-secondary leading-tight">Join 2,000+ users in our Discord.</p>
+                    <button className="text-[10px] font-black text-primary underline">JOIN NOW</button>
                   </div>
                   <AdUnit type="sidebar" />
                 </div>
