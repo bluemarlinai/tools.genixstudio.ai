@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
+import { Privacy } from './pages/Privacy';
+import { Terms } from './pages/Terms';
 import { ToolHeader } from './components/ToolHeader';
 import { AdUnit } from './components/AdUnit';
 import { TOOLS } from './data/tools';
@@ -32,9 +34,13 @@ import { PingTest } from './pages/PingTest';
 import { DnsLookup } from './pages/DnsLookup';
 import { IpIntelligence } from './pages/IpIntelligence';
 import { SubnetCalculator } from './pages/SubnetCalculator';
+import { GradientGenerator } from './pages/GradientGenerator';
+import { PaletteGenerator } from './pages/PaletteGenerator';
+import { B2BColorTokens } from './pages/B2BColorTokens';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [searchQuery, setSearchQuery] = useState('');
   const [headerActions, setHeaderActions] = useState<React.ReactNode>(null);
 
   const onBack = () => {
@@ -68,6 +74,9 @@ const App: React.FC = () => {
       case 'dns-lookup': return <DnsLookup onBack={onBack} setActions={setHeaderActions} />;
       case 'ip-intelligence': return <IpIntelligence setActions={setHeaderActions} />;
       case 'subnet-calc': return <SubnetCalculator />;
+      case 'gradient-gen': return <GradientGenerator onBack={onBack} setActions={setHeaderActions} />;
+      case 'palette-gen': return <PaletteGenerator onBack={onBack} setActions={setHeaderActions} />;
+      case 'b2b-tokens': return <B2BColorTokens setActions={setHeaderActions} />;
       default: return null;
     }
   };
@@ -75,10 +84,19 @@ const App: React.FC = () => {
   const toolMetadata = TOOLS.find(t => t.id === currentPage);
 
   return (
-    <Layout currentPage={currentPage} setCurrentPage={setCurrentPage}>
+    <Layout 
+      currentPage={currentPage} 
+      setCurrentPage={setCurrentPage}
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
+    >
       <div className="animate-in fade-in duration-500">
         {currentPage === 'home' ? (
-          <Home onSelect={setCurrentPage} />
+          <Home onSelect={setCurrentPage} searchQuery={searchQuery} />
+        ) : currentPage === 'privacy' ? (
+          <Privacy />
+        ) : currentPage === 'terms' ? (
+          <Terms />
         ) : (
           toolMetadata && (
             <div className="flex flex-col lg:flex-row gap-8">

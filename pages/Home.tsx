@@ -4,45 +4,52 @@ import { Page, ToolCategory } from '../types';
 import { TOOLS } from '../data/tools';
 import { AdUnit } from '../components/AdUnit';
 
-const CATEGORIES: ToolCategory[] = ['Networking', 'Development', 'Media', 'Security', 'Productivity'];
+const CATEGORIES: ToolCategory[] = ['Networking', 'Development', 'Design', 'Media', 'Security', 'Productivity'];
 
 interface HomeProps {
   onSelect: (page: Page) => void;
+  searchQuery: string;
 }
 
-export const Home: React.FC<HomeProps> = ({ onSelect }) => {
+export const Home: React.FC<HomeProps> = ({ onSelect, searchQuery }) => {
   const [activeCategory, setActiveCategory] = useState<ToolCategory | 'All'>('All');
 
-  const filteredTools = activeCategory === 'All' 
-    ? TOOLS 
-    : TOOLS.filter(t => t.category === activeCategory);
+  const filteredTools = TOOLS.filter(t => {
+    const matchesCategory = activeCategory === 'All' || t.category === activeCategory;
+    const matchesSearch = searchQuery === '' || 
+      t.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      t.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.category.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesCategory && matchesSearch;
+  });
 
   return (
-    <div className="flex flex-col gap-5 py-2">
-      {/* Header Section */}
-      <div className="flex flex-col gap-3 border-b border-border-light pb-4">
-        <div className="space-y-1">
-          <div className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/5 text-primary text-[10px] font-black tracking-widest uppercase">
-            Productivity OS
+    <div className="flex flex-col gap-4 py-1">
+      {/* Refined Header Section */}
+      <div className="flex flex-col gap-1.5">
+        <div className="space-y-0.5">
+          <div className="inline-flex items-center px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[8px] font-black tracking-widest uppercase">
+            Workstation
           </div>
-          <h1 className="text-3xl font-black tracking-tight text-text-main font-display sm:text-4xl">
-            Ultimate <span className="notebook-gradient italic">Portal</span>
+          <h1 className="text-2xl font-black tracking-tight text-text-main dark:text-white font-display sm:text-3xl">
+            Developer <span className="notebook-gradient italic">Workstation</span>
           </h1>
-          <p className="text-text-secondary font-light text-base max-w-xl">
-            High-performance development and creative utility suite.
+          <p className="text-text-secondary dark:text-slate-400 font-normal text-xs max-w-lg leading-relaxed opacity-80">
+            {searchQuery 
+              ? `Found ${filteredTools.length} tools matching "${searchQuery}"`
+              : "Curated minimalist utilities for development, networking, and security auditing."
+            }
           </p>
         </div>
       </div>
 
-      {/* Top Banner Ad Placement */}
-      <AdUnit type="banner" />
-
-      {/* Category Selection Bar */}
+      {/* Categories - Removed -mx-1 to ensure perfect left alignment */}
       <div className="flex items-center overflow-x-auto no-scrollbar py-1">
-        <div className="flex items-center bg-white p-1 rounded-xl border border-border-light shadow-sm flex-nowrap shrink-0">
+        <div className="flex items-center bg-white dark:bg-slate-800 p-0.5 rounded-xl border border-border-light dark:border-slate-700 shadow-sm flex-nowrap shrink-0">
           <button 
             onClick={() => setActiveCategory('All')}
-            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${activeCategory === 'All' ? 'bg-primary text-white shadow-md' : 'text-text-secondary hover:text-text-main hover:bg-slate-50'}`}
+            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tight transition-all whitespace-nowrap ${activeCategory === 'All' ? 'bg-primary text-white shadow-sm' : 'text-text-secondary hover:text-text-main hover:bg-slate-50 dark:hover:bg-slate-700'}`}
           >
             All Tools
           </button>
@@ -50,7 +57,7 @@ export const Home: React.FC<HomeProps> = ({ onSelect }) => {
             <button 
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${activeCategory === cat ? 'bg-primary text-white shadow-md' : 'text-text-secondary hover:text-text-main hover:bg-slate-50'}`}
+              className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tight transition-all whitespace-nowrap ${activeCategory === cat ? 'bg-primary text-white shadow-sm' : 'text-text-secondary hover:text-text-main hover:bg-slate-50 dark:hover:bg-slate-700'}`}
             >
               {cat}
             </button>
@@ -58,57 +65,77 @@ export const Home: React.FC<HomeProps> = ({ onSelect }) => {
         </div>
       </div>
 
-      {/* Tools Grid with Integrated Ads */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {filteredTools.map((tool, index) => {
-          const items = [];
-          
-          // 在第 5 个和第 13 个位置插入网格广告 (0-indexed)
-          if (index === 4 || index === 12) {
-            items.push(<AdUnit key={`ad-${index}`} type="grid" />);
-          }
+      {/* Banner Ad */}
+      {!searchQuery && <AdUnit type="banner" className="my-0" />}
 
-          items.push(
-            <div 
-              key={tool.id}
-              onClick={() => onSelect(tool.id as Page)}
-              className="group flex flex-col p-4 rounded-xl bg-white border border-border-light transition-all hover:shadow-lg hover:-translate-y-1 hover:border-primary/30 cursor-pointer relative overflow-hidden"
-            >
-              {tool.hot && (
-                <div className="absolute top-0 right-4 transform bg-primary text-white text-[7px] font-black tracking-widest px-2 py-2 rounded-b-md shadow-sm">
-                  HOT
+      {/* Grid */}
+      {filteredTools.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          {filteredTools.map((tool, index) => {
+            const items = [];
+            
+            if (!searchQuery && (index === 3 || index === 11)) {
+              items.push(<AdUnit key={`ad-${index}`} type="grid" />);
+            }
+
+            items.push(
+              <div 
+                key={tool.id}
+                onClick={() => onSelect(tool.id as Page)}
+                className="group flex flex-col p-4 rounded-xl bg-white dark:bg-slate-800 border border-border-light dark:border-slate-700 transition-all hover:shadow-md hover:border-primary/40 cursor-pointer relative overflow-hidden"
+              >
+                {tool.hot && (
+                  <div className="absolute top-0 right-3 transform bg-primary text-white text-[6px] font-black tracking-widest px-1.5 py-1.5 rounded-b-sm shadow-sm z-10">
+                    HOT
+                  </div>
+                )}
+                
+                <div className="flex items-start justify-between mb-3">
+                  <div className={`size-9 rounded-lg flex items-center justify-center shadow-sm transition-all group-hover:scale-110 ${tool.color}`}>
+                    <span className="material-symbols-outlined text-[20px]">{tool.icon}</span>
+                  </div>
+                  <span className="text-[8px] font-black uppercase tracking-widest text-slate-400 bg-slate-50/80 dark:bg-slate-900 px-1.5 py-0.5 rounded-md">
+                    {tool.category}
+                  </span>
                 </div>
-              )}
-              
-              <div className="flex items-start justify-between mb-3">
-                <div className={`size-10 rounded-xl flex items-center justify-center shadow-sm transition-all group-hover:scale-105 ${tool.color}`}>
-                  <span className="material-symbols-outlined text-2xl">{tool.icon}</span>
+                
+                <div className="space-y-0.5 flex-1">
+                  <h3 className="text-sm font-black text-text-main dark:text-white group-hover:text-primary transition-colors leading-tight">
+                    {tool.name}
+                  </h3>
+                  <p className="text-[10px] text-text-secondary dark:text-slate-400 leading-relaxed font-normal line-clamp-2 opacity-80">
+                    {tool.description}
+                  </p>
                 </div>
-                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full">
-                  {tool.category}
-                </span>
-              </div>
-              
-              <div className="space-y-1 flex-1">
-                <h3 className="text-base font-black text-text-main group-hover:text-primary transition-colors leading-tight">
-                  {tool.name}
-                </h3>
-                <p className="text-[12px] text-text-secondary leading-normal font-light line-clamp-2">
-                  {tool.description}
-                </p>
-              </div>
-              
-              <div className="mt-3 pt-3 border-t border-slate-50 flex items-center justify-between">
-                <div className="flex items-center gap-1 text-[11px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-all transform translate-x-1 group-hover:translate-x-0">
-                  Launch <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                
+                <div className="mt-3 pt-2 border-t border-slate-50 dark:border-slate-700 flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-[9px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-all">
+                    Launch <span className="material-symbols-outlined text-[12px]">chevron_right</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-          
-          return items;
-        })}
-      </div>
+            );
+            
+            return items;
+          })}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-16 px-4 text-center bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
+           <div className="size-14 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-300 mb-3">
+              <span className="material-symbols-outlined text-2xl">search_off</span>
+           </div>
+           <h3 className="text-sm font-black text-text-main dark:text-white mb-0.5">No results found</h3>
+           <p className="text-[10px] text-text-secondary dark:text-slate-400 max-w-xs mx-auto font-light">
+             Adjust your filters or keywords.
+           </p>
+           <button 
+             onClick={() => setActiveCategory('All')}
+             className="mt-4 px-5 py-2 bg-primary text-white rounded-lg text-[10px] font-black shadow-sm hover:scale-105 transition-all"
+           >
+             Clear Filters
+           </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,10 +1,12 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="scrollbar-gutter: stable;">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ToolPortal</title>
+  <!-- Replace CA-PUB-ID with your actual publisher ID -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,13 +35,13 @@
     };
   </script>
   <style>
-    body { font-family: 'Public Sans', sans-serif; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: 'Public Sans', sans-serif; overflow-y: scroll; }
     .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 10px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #bdc1c6; }
     
-    /* Hide scrollbar utility */
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -53,9 +55,9 @@
       background-size: 20px 20px;
     }
     @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slide-up { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .animate-in { animation: fade-in 0.5s ease-out; }
-    .slide-in { animation: slide-up 0.4s ease-out; }
+    @keyframes slide-up { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .animate-in { animation: fade-in 0.4s ease-out; }
+    .slide-in { animation: slide-up 0.3s ease-out; }
   </style>
 <script type="importmap">
 {

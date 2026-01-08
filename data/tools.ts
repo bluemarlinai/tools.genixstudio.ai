@@ -8,6 +8,11 @@ export const TOOLS: Tool[] = [
   { id: 'ping-test', name: 'Latency Checker', description: 'Measure web response times and analyze connectivity issues.', category: 'Networking', icon: 'network_ping', color: 'bg-emerald-50 text-emerald-600' },
   { id: 'dns-lookup', name: 'DNS Analyzer', description: 'Fetch and explain DNS records using AI-powered insights.', category: 'Networking', icon: 'dns', color: 'bg-blue-50 text-blue-600' },
 
+  // Design (New Category)
+  { id: 'b2b-tokens', name: 'B2B Theme Engine', description: 'AI-generated enterprise design tokens (Success, Warning, Error) based on brand logic.', category: 'Design', icon: 'settings_input_component', color: 'bg-indigo-50 text-indigo-600', hot: true },
+  { id: 'gradient-gen', name: 'CSS Gradient Lab', description: 'Design complex linear and radial gradients with precision angle control.', category: 'Design', icon: 'gradient', color: 'bg-purple-50 text-purple-600' },
+  { id: 'palette-gen', name: 'Harmony Palette', description: 'Generate complementary and monochromatic color schemes for UI design.', category: 'Design', icon: 'palette', color: 'bg-pink-50 text-pink-600' },
+
   // Development
   { id: 'json-mock', name: 'JSON Mock Generator', description: 'Design realistic data schemas and generate mock JSON.', category: 'Development', icon: 'database', color: 'bg-blue-50 text-blue-600' },
   { id: 'json-formatter', name: 'JSON Formatter', description: 'Beautify, validate, and minify your JSON data.', category: 'Development', icon: 'code', color: 'bg-purple-50 text-purple-600' },

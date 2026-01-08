@@ -1,5 +1,5 @@
 
-export type ToolCategory = 'Development' | 'Media' | 'Security' | 'Productivity' | 'Networking';
+export type ToolCategory = 'Development' | 'Media' | 'Security' | 'Productivity' | 'Networking' | 'Design';
 
 export interface Tool {
   id: string;
@@ -20,6 +20,8 @@ export interface MockField {
 
 export type Page = 
   | 'home' 
+  | 'privacy'
+  | 'terms'
   | 'json-mock' 
   | 'url-utils' 
   | 'json-formatter' 
@@ -43,4 +45,7 @@ export type Page =
   | 'ping-test'
   | 'dns-lookup'
   | 'ip-intelligence'
-  | 'subnet-calc';
+  | 'subnet-calc'
+  | 'gradient-gen'
+  | 'palette-gen'
+  | 'b2b-tokens';
