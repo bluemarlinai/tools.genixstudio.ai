@@ -1,6 +1,28 @@
 
 import React, { useState } from 'react';
 
+// Added key to the prop type to satisfy TypeScript when used in a list map
+const Swatch = ({ color, label, key }: { color: string, label: string, key?: React.Key }) => (
+  <div 
+    key={key}
+    className="group flex flex-col gap-2 cursor-pointer" 
+    onClick={() => navigator.clipboard.writeText(color)}
+  >
+    <div 
+      className="w-full h-24 rounded-xl shadow-sm border border-black/5 group-hover:scale-[1.02] transition-all relative overflow-hidden"
+      style={{ backgroundColor: color }}
+    >
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center">
+        <span className="material-symbols-outlined text-white opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 transition-all">content_copy</span>
+      </div>
+    </div>
+    <div className="flex flex-col">
+      <span className="text-[9px] font-black uppercase text-slate-400 leading-none mb-1">{label}</span>
+      <span className="text-[10px] font-mono font-bold text-text-main">{color.toUpperCase()}</span>
+    </div>
+  </div>
+);
+
 export const PaletteGenerator: React.FC<{ onBack: () => void, setActions: (a: any) => void }> = () => {
   const [baseColor, setBaseColor] = useState('#0b57d0');
 
@@ -8,26 +30,6 @@ export const PaletteGenerator: React.FC<{ onBack: () => void, setActions: (a: an
   const generateShades = (hex: string) => {
     return [0.1, 0.3, 0.5, 0.7, 0.9].map(opacity => hex); // Placeholder for real logic
   };
-
-  const Swatch = ({ color, label }: { color: string, label: string }) => (
-    <div 
-      className="group flex flex-col gap-2 cursor-pointer" 
-      onClick={() => navigator.clipboard.writeText(color)}
-    >
-      <div 
-        className="w-full h-24 rounded-xl shadow-sm border border-black/5 group-hover:scale-[1.02] transition-all relative overflow-hidden"
-        style={{ backgroundColor: color }}
-      >
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center">
-          <span className="material-symbols-outlined text-white opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 transition-all">content_copy</span>
-        </div>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-[9px] font-black uppercase text-slate-400 leading-none mb-1">{label}</span>
-        <span className="text-[10px] font-mono font-bold text-text-main">{color.toUpperCase()}</span>
-      </div>
-    </div>
-  );
 
   return (
     <div className="flex flex-col gap-8">

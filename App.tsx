@@ -37,6 +37,18 @@ import { SubnetCalculator } from './pages/SubnetCalculator';
 import { GradientGenerator } from './pages/GradientGenerator';
 import { PaletteGenerator } from './pages/PaletteGenerator';
 import { B2BColorTokens } from './pages/B2BColorTokens';
+import { DiffChecker } from './pages/DiffChecker';
+import { UnixTimestamp } from './pages/UnixTimestamp';
+import { JsonToTs } from './pages/JsonToTs';
+import { SqlFormatter } from './pages/SqlFormatter';
+import { WcagContrast } from './pages/WcagContrast';
+import { AspectRatioCalc } from './pages/AspectRatioCalc';
+import { ShadowStudio } from './pages/ShadowStudio';
+import { HasherTool } from './pages/HasherTool';
+import { MarkdownTableMaker } from './pages/MarkdownTableMaker';
+import { LoremIpsumGen } from './pages/LoremIpsumGen';
+import { EnglishNameGen } from './pages/EnglishNameGen';
+import { SocialBioGen } from './pages/SocialBioGen';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -50,6 +62,8 @@ const App: React.FC = () => {
 
   const renderToolBody = () => {
     switch (currentPage) {
+      case 'english-name': return <EnglishNameGen />;
+      case 'social-bio': return <SocialBioGen />;
       case 'json-mock': return <JsonMockGenerator onBack={onBack} />;
       case 'url-utils': return <UrlEncoder onBack={onBack} />;
       case 'json-formatter': return <JsonFormatter onBack={onBack} setActions={setHeaderActions} />;
@@ -77,6 +91,16 @@ const App: React.FC = () => {
       case 'gradient-gen': return <GradientGenerator onBack={onBack} setActions={setHeaderActions} />;
       case 'palette-gen': return <PaletteGenerator onBack={onBack} setActions={setHeaderActions} />;
       case 'b2b-tokens': return <B2BColorTokens setActions={setHeaderActions} />;
+      case 'diff-checker': return <DiffChecker onBack={onBack} setActions={setHeaderActions} />;
+      case 'unix-timestamp': return <UnixTimestamp onBack={onBack} setActions={setHeaderActions} />;
+      case 'json-to-ts': return <JsonToTs onBack={onBack} setActions={setHeaderActions} />;
+      case 'sql-formatter': return <SqlFormatter onBack={onBack} setActions={setHeaderActions} />;
+      case 'wcag-contrast': return <WcagContrast setActions={setHeaderActions} />;
+      case 'aspect-ratio': return <AspectRatioCalc />;
+      case 'box-shadow': return <ShadowStudio setActions={setHeaderActions} />;
+      case 'hasher': return <HasherTool onBack={onBack} setActions={setHeaderActions} />;
+      case 'markdown-table': return <MarkdownTableMaker onBack={onBack} setActions={setHeaderActions} />;
+      case 'lorem-ipsum': return <LoremIpsumGen onBack={onBack} setActions={setHeaderActions} />;
       default: return null;
     }
   };
@@ -117,9 +141,8 @@ const App: React.FC = () => {
               <aside className="hidden xl:block w-72 shrink-0">
                 <div className="sticky top-24 space-y-4">
                   <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 text-center space-y-1.5">
-                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/60">Community</p>
-                    <p className="text-[11px] font-medium text-text-secondary leading-tight">Join 2,000+ developers in our Discord.</p>
-                    <button className="text-[10px] font-black text-primary underline">JOIN NOW</button>
+                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/60">Universal Access</p>
+                    <p className="text-[11px] font-medium text-text-secondary leading-tight">Fast tools for everyday life.</p>
                   </div>
                   <AdUnit type="sidebar" />
                 </div>

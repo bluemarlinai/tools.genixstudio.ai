@@ -43,7 +43,6 @@ export const Layout: React.FC<LayoutProps> = ({
     <div className={`min-h-screen flex flex-col ${isDark ? 'dark' : ''}`}>
       <header className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-border-light dark:border-slate-800 px-4 py-2">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
-          {/* Logo Section - Refined Copy */}
           <div 
             className="flex items-center gap-2.5 cursor-pointer shrink-0" 
             onClick={() => {
@@ -52,15 +51,14 @@ export const Layout: React.FC<LayoutProps> = ({
             }}
           >
             <div className="size-8 flex items-center justify-center rounded-lg bg-primary text-white shadow-sm">
-              <span className="material-symbols-outlined font-bold text-[18px]">terminal</span>
+              <span className="material-symbols-outlined font-bold text-[18px]">grid_view</span>
             </div>
             <div className="flex flex-col leading-none">
-              <h1 className="text-sm font-black tracking-tighter text-text-main dark:text-white uppercase">DevPortal</h1>
-              <span className="text-[8px] font-bold text-slate-400 tracking-wider uppercase">System Toolbox</span>
+              <h1 className="text-sm font-black tracking-tighter text-text-main dark:text-white uppercase">SmartPortal</h1>
+              <span className="text-[8px] font-bold text-slate-400 tracking-wider uppercase">Universal Toolbox</span>
             </div>
           </div>
 
-          {/* Enhanced Search Bar */}
           <div className="flex-1 max-w-md hidden md:block">
             <div className="relative group">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary text-[18px] group-focus-within:text-primary transition-colors">search</span>
@@ -69,7 +67,7 @@ export const Layout: React.FC<LayoutProps> = ({
                 type="text" 
                 value={searchQuery}
                 onChange={handleSearchChange}
-                placeholder="Search tools or commands... (⌘K)" 
+                placeholder="Search tools or life hacks... (⌘K)" 
                 className="w-full bg-slate-100/50 dark:bg-slate-800/50 border border-transparent rounded-xl py-1.5 pl-10 pr-12 text-xs font-medium focus:ring-2 focus:ring-primary/10 focus:bg-white dark:focus:bg-slate-800 focus:border-primary/20 transition-all outline-none"
               />
               <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
@@ -89,7 +87,6 @@ export const Layout: React.FC<LayoutProps> = ({
             </div>
           </div>
 
-          {/* Right Action Group */}
           <div className="flex items-center gap-1 sm:gap-4">
             <nav className="hidden lg:flex items-center gap-0.5 bg-slate-100/50 p-0.5 rounded-lg border border-slate-200/50">
               <button 
@@ -102,7 +99,7 @@ export const Layout: React.FC<LayoutProps> = ({
                 Tools
               </button>
               <button className="px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-tight text-text-secondary hover:text-text-main hover:bg-white/50 transition-all">
-                Docs
+                Help
               </button>
             </nav>
 
@@ -115,17 +112,12 @@ export const Layout: React.FC<LayoutProps> = ({
               >
                 <span className="material-symbols-outlined text-[18px]">{isDark ? 'light_mode' : 'dark_mode'}</span>
               </button>
-              
-              <button className="size-8 flex items-center justify-center rounded-lg text-text-secondary hover:bg-slate-100 hover:text-primary transition-all relative" title="Notifications">
-                <span className="material-symbols-outlined text-[18px]">notifications</span>
-                <span className="absolute top-1.5 right-1.5 size-1.5 bg-rose-500 border-2 border-white rounded-full"></span>
-              </button>
             </div>
 
             <div className="flex items-center gap-2 pl-2 border-l border-border-light ml-1">
               <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-indigo-600 p-[1.5px] shadow-sm active:scale-95 transition-all cursor-pointer">
                 <div className="size-full bg-white rounded-[6px] flex items-center justify-center text-primary text-[10px] font-black">
-                  AD
+                  HI
                 </div>
               </div>
             </div>
@@ -140,17 +132,16 @@ export const Layout: React.FC<LayoutProps> = ({
       <footer className="border-t border-border-light bg-white py-4 mt-auto">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-[10px] text-text-secondary gap-3">
           <div className="flex items-center gap-3">
-            <p className="font-medium opacity-60">© 2024 DevPortal</p>
+            <p className="font-medium opacity-60">© 2024 SmartPortal</p>
             <div className="h-2 w-[1px] bg-slate-200"></div>
             <div className="flex items-center gap-1 text-emerald-600 font-bold uppercase tracking-widest">
               <span className="size-1 rounded-full bg-emerald-500 animate-pulse"></span>
-              Operational
+              All Systems Operational
             </div>
           </div>
           <div className="flex gap-4 font-bold uppercase tracking-widest opacity-80">
             <button onClick={() => setCurrentPage('privacy')} className="hover:text-primary transition-colors">Privacy</button>
             <button onClick={() => setCurrentPage('terms')} className="hover:text-primary transition-colors">Terms</button>
-            <a href="https://ai.google.dev" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">API Status</a>
           </div>
         </div>
       </footer>

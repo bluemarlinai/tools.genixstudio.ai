@@ -5,6 +5,22 @@ interface B2BColorTokensProps {
   setActions: (actions: React.ReactNode) => void;
 }
 
+// Added key to the prop type to satisfy TypeScript when used in a list map
+const TokenRow = ({ label, color, key }: { label: string, color: string, key?: React.Key }) => (
+  <div key={key} className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 hover:shadow-sm transition-all group">
+    <div className="flex items-center gap-3">
+      <div className="size-8 rounded-lg shadow-inner border border-black/5" style={{ backgroundColor: color }} />
+      <span className="text-xs font-bold text-text-main uppercase tracking-tight">{label}</span>
+    </div>
+    <button 
+      onClick={() => navigator.clipboard.writeText(color)}
+      className="text-[10px] font-black text-slate-300 group-hover:text-primary transition-colors font-mono"
+    >
+      {color.toUpperCase()}
+    </button>
+  </div>
+);
+
 export const B2BColorTokens: React.FC<B2BColorTokensProps> = ({ setActions }) => {
   const [baseColor, setBaseColor] = useState('#0b57d0');
   const [tokens, setTokens] = useState<any>(null);
@@ -25,21 +41,6 @@ export const B2BColorTokens: React.FC<B2BColorTokensProps> = ({ setActions }) =>
       }
     });
   };
-
-  const TokenRow = ({ label, color }: { label: string, color: string }) => (
-    <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 hover:shadow-sm transition-all group">
-      <div className="flex items-center gap-3">
-        <div className="size-8 rounded-lg shadow-inner border border-black/5" style={{ backgroundColor: color }} />
-        <span className="text-xs font-bold text-text-main uppercase tracking-tight">{label}</span>
-      </div>
-      <button 
-        onClick={() => navigator.clipboard.writeText(color)}
-        className="text-[10px] font-black text-slate-300 group-hover:text-primary transition-colors font-mono"
-      >
-        {color.toUpperCase()}
-      </button>
-    </div>
-  );
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
