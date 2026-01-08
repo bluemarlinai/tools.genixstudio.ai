@@ -7,7 +7,7 @@ interface CrontabGeneratorProps {
   setActions: (actions: React.ReactNode) => void;
 }
 
-export const CrontabGenerator: React.FC<CrontabGeneratorProps> = ({ setActions }) => {
+export const CrontabGenerator: React.FC<CrontabGeneratorProps> = ({ onBack, setActions }) => {
   const [expression, setExpression] = useState('* * * * *');
   const [explanation, setExplanation] = useState('Runs every minute of every day.');
   const [loading, setLoading] = useState(false);

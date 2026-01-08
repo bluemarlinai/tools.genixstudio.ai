@@ -91,15 +91,17 @@ const App: React.FC = () => {
                   onBack={onBack}
                   actions={headerActions}
                 />
-                {renderToolBody()}
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  {renderToolBody()}
+                </div>
               </div>
               
-              {/* Subtle Sidebar Ad for Tool Pages */}
               <aside className="hidden xl:block w-72 shrink-0">
                 <div className="sticky top-24">
-                  <div className="bg-slate-50/50 p-6 rounded-3xl border border-dashed border-border-light text-center space-y-2">
-                    <p className="text-[10px] font-black uppercase text-slate-400">Toolkit Buddy</p>
-                    <p className="text-xs font-light text-text-secondary">Want more advanced AI tools? Check out our Enterprise Edition.</p>
+                  <div className="bg-white/50 backdrop-blur-sm p-6 rounded-3xl border border-dashed border-border-light text-center space-y-2 mb-6">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Pro Feature</p>
+                    <p className="text-xs font-light text-text-secondary">Get real-time collaboration with ToolPortal Team.</p>
+                    <button className="mt-2 text-[10px] font-black text-primary underline">UPGRADE</button>
                   </div>
                   <AdUnit type="sidebar" />
                 </div>
