@@ -2,26 +2,44 @@
 import React from 'react';
 
 interface AdUnitProps {
-  type: 'grid' | 'sidebar' | 'banner';
+  type: 'grid' | 'sidebar' | 'banner' | 'native-feed';
+  label?: string;
 }
 
-export const AdUnit: React.FC<AdUnitProps> = ({ type }) => {
-  if (type === 'grid') {
+export const AdUnit: React.FC<AdUnitProps> = ({ type, label = "ADVERTISEMENT" }) => {
+  // 模拟 AdSense 的加载状态和样式
+  const baseLabel = <span className="absolute top-1 left-2 text-[8px] font-bold text-slate-300 tracking-widest">{label}</span>;
+
+  if (type === 'banner') {
     return (
-      <div className="flex flex-col p-4 rounded-xl bg-gradient-to-br from-slate-50 to-white border border-dashed border-primary/20 transition-all hover:shadow-md cursor-pointer relative overflow-hidden group">
-        <div className="absolute top-2 right-4 text-[7px] font-black uppercase tracking-[0.2em] text-slate-300">Sponsored</div>
-        <div className="size-10 rounded-xl flex items-center justify-center bg-white border border-slate-100 shadow-sm mb-3 group-hover:scale-105 transition-transform shrink-0">
-          <span className="material-symbols-outlined text-primary text-2xl">campaign</span>
+      <div className="w-full bg-white border border-border-light rounded-xl overflow-hidden relative min-h-[90px] flex items-center justify-center group cursor-help mb-4">
+        {baseLabel}
+        <div className="text-center space-y-1">
+          <div className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Horizontal Leaderboard</div>
+          <div className="text-[9px] text-slate-300 font-mono">728 x 90 (Responsive)</div>
         </div>
-        <div className="space-y-1 flex-1">
-          <h3 className="text-sm font-bold text-text-main group-hover:text-primary transition-colors">CloudScale Pro</h3>
-          <p className="text-[11px] text-text-secondary leading-normal font-light">
-            Deploy your mock services globally with 99.9% uptime.
-          </p>
+        <div className="absolute inset-0 border-2 border-transparent group-hover:border-primary/10 transition-colors pointer-events-none"></div>
+      </div>
+    );
+  }
+
+  if (type === 'grid' || type === 'native-feed') {
+    return (
+      <div className="group flex flex-col p-4 rounded-xl bg-slate-50/50 border border-dashed border-slate-200 transition-all hover:border-primary/30 cursor-pointer relative overflow-hidden min-h-[160px]">
+        {baseLabel}
+        <div className="flex-1 flex flex-col items-center justify-center text-center space-y-2 py-4">
+          <div className="size-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-300">
+            <span className="material-symbols-outlined text-3xl">ads_click</span>
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-tight">Display Ad Unit</h3>
+            <p className="text-[10px] text-slate-300 leading-tight max-w-[150px]">
+              In-feed native advertisement unit placeholder
+            </p>
+          </div>
         </div>
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-[9px] font-black text-primary px-2 py-0.5 bg-primary/5 rounded-full">UPGRADE</span>
-          <span className="material-symbols-outlined text-slate-300 text-sm group-hover:translate-x-0.5 transition-transform">arrow_outward</span>
+        <div className="pt-2 flex justify-end">
+           <span className="text-[9px] font-black text-slate-400 border border-slate-200 px-2 py-0.5 rounded">SPONSORED</span>
         </div>
       </div>
     );
@@ -29,23 +47,26 @@ export const AdUnit: React.FC<AdUnitProps> = ({ type }) => {
 
   if (type === 'sidebar') {
     return (
-      <div className="bg-white rounded-xl border border-border-light shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-border-light shadow-sm overflow-hidden relative min-h-[400px] flex flex-col">
         <div className="px-3 py-1.5 bg-slate-50 border-b border-border-light flex justify-between items-center">
-          <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Promoted</span>
+          <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">{label}</span>
           <span className="material-symbols-outlined text-[12px] text-slate-300">info</span>
         </div>
-        <div className="p-4 space-y-3">
-          <div className="aspect-video bg-slate-100 rounded-lg flex items-center justify-center border border-slate-200 shadow-inner group cursor-pointer relative overflow-hidden">
-             <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=400&q=80" className="absolute inset-0 size-full object-cover opacity-80 group-hover:scale-105 transition-transform" />
-             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-             <p className="absolute bottom-2 left-2 text-white text-[9px] font-black uppercase tracking-widest">Master React</p>
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center space-y-4">
+          <div className="w-full aspect-[3/4] bg-slate-50 rounded-lg flex items-center justify-center border border-slate-100 border-dashed relative">
+             <div className="text-[10px] font-black text-slate-300 uppercase rotate-45">Vertical Skyscraper</div>
           </div>
-          <p className="text-[11px] text-text-secondary leading-normal font-light">
-            20% off for ToolPortal users. Code <strong>TP20</strong>.
-          </p>
-          <button className="w-full bg-slate-900 text-white py-2 rounded-lg text-[9px] font-black hover:bg-black transition-all active:scale-95">
-            LEARN MORE
-          </button>
+          <div className="space-y-2">
+            <div className="h-2 w-24 bg-slate-100 rounded mx-auto"></div>
+            <div className="h-2 w-32 bg-slate-50 rounded mx-auto"></div>
+            <div className="h-2 w-20 bg-slate-100 rounded mx-auto"></div>
+          </div>
+          <div className="w-full h-8 bg-slate-900 rounded-lg flex items-center justify-center text-[10px] font-black text-white uppercase tracking-widest opacity-20">
+            Buy Now
+          </div>
+        </div>
+        <div className="p-2 text-center border-t border-slate-50">
+           <p className="text-[8px] text-slate-300 uppercase">300 x 600 Size</p>
         </div>
       </div>
     );

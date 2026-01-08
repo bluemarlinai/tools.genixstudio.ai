@@ -18,7 +18,7 @@ export const Home: React.FC<HomeProps> = ({ onSelect }) => {
     : TOOLS.filter(t => t.category === activeCategory);
 
   return (
-    <div className="flex flex-col gap-6 py-2">
+    <div className="flex flex-col gap-5 py-2">
       {/* Header Section */}
       <div className="flex flex-col gap-3 border-b border-border-light pb-4">
         <div className="space-y-1">
@@ -33,6 +33,9 @@ export const Home: React.FC<HomeProps> = ({ onSelect }) => {
           </p>
         </div>
       </div>
+
+      {/* Top Banner Ad Placement */}
+      <AdUnit type="banner" />
 
       {/* Category Selection Bar */}
       <div className="flex items-center overflow-x-auto no-scrollbar py-1">
@@ -55,15 +58,19 @@ export const Home: React.FC<HomeProps> = ({ onSelect }) => {
         </div>
       </div>
 
-      {/* Tools Grid */}
+      {/* Tools Grid with Integrated Ads */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {filteredTools.map((tool, index) => (
-          <React.Fragment key={tool.id}>
-            {index === 4 && (activeCategory === 'All' || activeCategory === 'Networking') && (
-              <AdUnit type="grid" />
-            )}
-            
+        {filteredTools.map((tool, index) => {
+          const items = [];
+          
+          // 在第 5 个和第 13 个位置插入网格广告 (0-indexed)
+          if (index === 4 || index === 12) {
+            items.push(<AdUnit key={`ad-${index}`} type="grid" />);
+          }
+
+          items.push(
             <div 
+              key={tool.id}
               onClick={() => onSelect(tool.id as Page)}
               className="group flex flex-col p-4 rounded-xl bg-white border border-border-light transition-all hover:shadow-lg hover:-translate-y-1 hover:border-primary/30 cursor-pointer relative overflow-hidden"
             >
@@ -97,8 +104,10 @@ export const Home: React.FC<HomeProps> = ({ onSelect }) => {
                 </div>
               </div>
             </div>
-          </React.Fragment>
-        ))}
+          );
+          
+          return items;
+        })}
       </div>
     </div>
   );

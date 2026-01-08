@@ -81,7 +81,7 @@ const App: React.FC = () => {
           <Home onSelect={setCurrentPage} />
         ) : (
           toolMetadata && (
-            <div className="flex flex-col lg:flex-row gap-10">
+            <div className="flex flex-col lg:flex-row gap-8">
               <div className="flex-1 min-w-0">
                 <ToolHeader 
                   title={toolMetadata.name}
@@ -97,11 +97,11 @@ const App: React.FC = () => {
               </div>
               
               <aside className="hidden xl:block w-72 shrink-0">
-                <div className="sticky top-24">
-                  <div className="bg-white/50 backdrop-blur-sm p-6 rounded-3xl border border-dashed border-border-light text-center space-y-2 mb-6">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Pro Feature</p>
-                    <p className="text-xs font-light text-text-secondary">Get real-time collaboration with ToolPortal Team.</p>
-                    <button className="mt-2 text-[10px] font-black text-primary underline">UPGRADE</button>
+                <div className="sticky top-24 space-y-4">
+                  <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 text-center space-y-1.5">
+                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/60">Community</p>
+                    <p className="text-[11px] font-medium text-text-secondary leading-tight">Join 2,000+ developers in our Discord.</p>
+                    <button className="text-[10px] font-black text-primary underline">JOIN NOW</button>
                   </div>
                   <AdUnit type="sidebar" />
                 </div>
